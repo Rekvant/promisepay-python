@@ -13,47 +13,44 @@ def auth(username,secret,is_production=False):
 	os.environ['is_production'] = is_production
 	
 
-try:
-
-	from django.conf import settings
-
-	password = settings.PROMISE_PAY_SECRET
-	username = settings.PROMISE_PAY_KEY
-
-	is_production = getattr(settings, "PROMISE_PAY_IS_PROD", False)
-
-	AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
-	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
-
-except:
-
-	if not os.environ.has_key('PROMISE_PAY_SECRET') or not os.environ.has_key('PROMISE_PAY_KEY'):
-		raise Exception('Make sure you have imported auth from promisepay import auth , And set username and password secret ')
-
-	username = os.environ.get('PROMISE_PAY_KEY')  
-	password = os.environ.get('PROMISE_PAY_SECRET')  
-	is_production = os.environ.get('is_production')  
-
-	AUTH = 'Basic '+base64.b64encode(key+':'+secret)
-	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
-
-
-
-if is_production:
-	MASTER_URL = 'https://api.promisepay.com/'
-else:
-	MASTER_URL = 'https://test.api.promisepay.com/'
-
 
 
 class PromisePay(object):
+
+
 	
 	def __init__(self):
+
+		try:
+			from django.conf import settings
+
+			self.password = settings.PROMISE_PAY_SECRET
+			self.username = settings.PROMISE_PAY_KEY
+
+			self.is_production = getattr(settings, "PROMISE_PAY_IS_PROD", False)
+
+			self.AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
+			self.HEADERS = {'Authorization': self.AUTH,"Content-Type": "application/json"}
+
+
+		except:
+
+			if not os.environ.has_key('PROMISE_PAY_SECRET') or not os.environ.has_key('PROMISE_PAY_KEY'):
+				raise Exception('Make sure you have imported auth from promisepay import auth , And set username and password secret ')
+
+			self.username = os.environ.get('PROMISE_PAY_KEY')  
+			self.password = os.environ.get('PROMISE_PAY_SECRET')  
+			self.is_production = os.environ.get('is_production')  
+
+			self.AUTH = 'Basic '+base64.b64encode(self.username+':'+self.password)
+			self.HEADERS = {'Authorization': self.AUTH,"Content-Type": "application/json"}
+
+		if self.is_production:
+			self.MASTER_URL = 'https://api.promisepay.com/'
+		else:
+			self.MASTER_URL = 'https://test.api.promisepay.com/'
+
 			
-		self.AUTH = AUTH
-		self.HEADERS = HEADERS
-		
-		
 
 	def get_list(self,path,limit=10,offset=0):
 
@@ -63,7 +60,7 @@ class PromisePay(object):
 
 		payload = {'limit': self.limit, 'offset': self.offset}
 
-		r = requests.get(MASTER_URL+self.path, headers=self.HEADERS,params=payload)
+		r = requests.get(self.MASTER_URL+self.path, headers=self.HEADERS,params=payload)
 		
 		if r.json().has_key('meta'):
 			return r.json()
@@ -83,10 +80,10 @@ class PromisePay(object):
 		
 
 		if id:
-			r = requests.get(MASTER_URL+path+'/'+id, headers=self.HEADERS)
+			r = requests.get(self.MASTER_URL+path+'/'+id, headers=self.HEADERS)
 
 		else:
-			r = requests.get(MASTER_URL+path+'/', headers=self.HEADERS)
+			r = requests.get(self.MASTER_URL+path+'/', headers=self.HEADERS)
 		
 		if r.status_code == 503:
 			return {'errors':'Service is down'}
@@ -101,10 +98,10 @@ class PromisePay(object):
 		
 		
 		if id:
-			r = requests.delete(MASTER_URL+path+'/'+id, headers=self.HEADERS)
+			r = requests.delete(self.MASTER_URL+path+'/'+id, headers=self.HEADERS)
 
 		else:
-			r = requests.delete(MASTER_URL+path+'/', headers=self.HEADERS)
+			r = requests.delete(self.MASTER_URL+path+'/', headers=self.HEADERS)
 		
 
 		print "SCODE",r.status_code
@@ -124,7 +121,7 @@ class PromisePay(object):
 
 	def add_one(self,path,data=None):
 	
-		r = requests.post(MASTER_URL+path, headers=self.HEADERS,data=json.dumps(data))
+		r = requests.post(self.MASTER_URL+path, headers=self.HEADERS,data=json.dumps(data))
 
 
 		if r.status_code == 201:
@@ -142,6 +139,6 @@ class PromisePay(object):
 
 	def edit_one(self,path,id,data):
 
-		r = requests.patch(MASTER_URL+path+'/'+id, data=json.dumps(data),headers=self.HEADERS)
+		r = requests.patch(self.MASTER_URL+path+'/'+id, data=json.dumps(data),headers=self.HEADERS)
 
 		return r
