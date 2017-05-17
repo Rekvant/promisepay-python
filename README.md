@@ -30,5 +30,26 @@ auth('YOUR PROMISEPAY username','YOUR PROMISEPAY SECRET KEY',PROMISE_PAY_IS_PROD
 # Example usage
 
 
+```python
+from promisepay.modules import PromisePayUser
 
-# currently under development 
+#get list of users
+
+p = PromisePayUser()
+users = p.get_list(limit=2)
+
+for user in users:
+  print user.id
+  print user.full_name
+
+#get one user
+
+user = PromisePayUser('UNIQUE id of promisepay user')
+if user.status=='success':
+  print user.id 
+  print user.full_name
+
+```
+
+
+# currently under development . will update soon
