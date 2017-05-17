@@ -5,7 +5,7 @@ import json
 
 
 import os
-
+from distutils.util import strtobool
 
 def auth(username,secret,is_production=False):
 	os.environ['PROMISE_PAY_SECRET'] = secret
@@ -29,6 +29,13 @@ class PromisePay(object):
 
 			self.is_production = getattr(settings, "PROMISE_PAY_IS_PROD", False)
 
+
+			if self.is_production:
+				self.MASTER_URL = 'https://api.promisepay.com/'
+			else:
+				self.MASTER_URL = 'https://test.api.promisepay.com/'
+
+
 			self.AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
 			self.HEADERS = {'Authorization': self.AUTH,"Content-Type": "application/json"}
 
@@ -40,16 +47,18 @@ class PromisePay(object):
 
 			self.username = os.environ.get('PROMISE_PAY_KEY')  
 			self.password = os.environ.get('PROMISE_PAY_SECRET')  
-			self.is_production = bool(os.environ.get('is_production'))
+			self.is_production =  bool(strtobool(str(os.environ.get('is_production'))))
+			
+			if self.is_production:
+				self.MASTER_URL = 'https://api.promisepay.com/'
+			else:
+				self.MASTER_URL = 'https://test.api.promisepay.com/'
+
 
 			self.AUTH = 'Basic '+base64.b64encode(self.username+':'+self.password)
 			self.HEADERS = {'Authorization': self.AUTH,"Content-Type": "application/json"}
 
-		if self.is_production:
-			self.MASTER_URL = 'https://api.promisepay.com/'
-		else:
-			self.MASTER_URL = 'https://test.api.promisepay.com/'
-
+		
 			
 
 	def get_list(self,path,limit=10,offset=0):

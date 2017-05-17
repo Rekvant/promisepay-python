@@ -240,7 +240,6 @@ class PromisePayUser(PromisePay):
 		data_list = []
 
 		for user in json.loads(json.dumps(datas,sort_keys=True, indent=4)):
-			print user
 			u = PromisePayUser(user['id'])
 			data_list.append(u)
 
