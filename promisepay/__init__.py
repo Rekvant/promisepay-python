@@ -9,14 +9,27 @@ if not is_production:
 else:
 	MASTER_URL = 'https://test.api.promisepay.com/'
 
-from django.conf import settings
+try:
 
-password = settings.PROMISE_PAY_SECRET
-username = settings.PROMISE_PAY_KEY
+	from django.conf import settings
+
+	password = settings.PROMISE_PAY_SECRET
+	username = settings.PROMISE_PAY_KEY
 
 
-AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
-HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
+	AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
+	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
+
+except ImproperlyConfigured:
+
+	password = 'YOUR PROMISEPAY SECRET'
+	username = 'YOUR PROMISEPAY KEY'
+
+
+	AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
+	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
+
+
 
 
 class PromisePay(object):
