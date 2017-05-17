@@ -2,12 +2,16 @@
 import requests
 import base64
 import json
-is_production = False
 
-if not is_production:
-	MASTER_URL = 'https://test.api.promisepay.com/'
-else:
-	MASTER_URL = 'https://test.api.promisepay.com/'
+
+import os
+
+
+def auth(username,secret,is_production=False):
+	os.environ['PROMISE_PAY_SECRET'] = secret
+	os.environ['PROMISE_PAY_KEY'] = username 
+	os.environ['is_production'] = is_production
+	
 
 try:
 
@@ -16,25 +20,36 @@ try:
 	password = settings.PROMISE_PAY_SECRET
 	username = settings.PROMISE_PAY_KEY
 
+	is_production = getattr(settings, "PROMISE_PAY_IS_PROD", False)
 
 	AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
 	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
 
 except:
 
-	username = 'YOUR PROMISEPAY USERNAME'
-	password = 'YOUR PROMISEPAY SECRECT'
+	if not os.environ.has_key('PROMISE_PAY_SECRET') or not os.environ.has_key('PROMISE_PAY_KEY'):
+		raise Exception('Make sure you have imported auth from promisepay import auth , And set username and password secret ')
+
+	username = os.environ.get('PROMISE_PAY_KEY')  
+	password = os.environ.get('PROMISE_PAY_SECRET')  
+	is_production = os.environ.get('is_production')  
+
+	AUTH = 'Basic '+base64.b64encode(key+':'+secret)
+	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
+
+
+
+if is_production:
+	MASTER_URL = 'https://api.promisepay.com/'
+else:
+	MASTER_URL = 'https://test.api.promisepay.com/'
+
 
 
 class PromisePay(object):
 	
 	def __init__(self):
-
-		if not password and not username:
-			AUTH = 'Basic '+base64.b64encode(key+':'+secret)
-			HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
-
-
+			
 		self.AUTH = AUTH
 		self.HEADERS = HEADERS
 		

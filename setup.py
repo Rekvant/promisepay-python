@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(name='promisepay',
       description='Python SDK for PromisePay/ Assemblypayments',
-      version='1.0',
+      version='1.2',
       url='https://github.com/Rekvant/promisepay-python',
       author='Anish Menon',
       author_email='info@rekvant.com',
