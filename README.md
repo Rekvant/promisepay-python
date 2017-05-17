@@ -39,15 +39,15 @@ p = PromisePayUser()
 users = p.get_list(limit=2)
 
 for user in users:
-  print user.id
-  print user.full_name
+    print user.id
+    print user.full_name
 
 #get one user
 
 user = PromisePayUser('UNIQUE id of promisepay user')
 if user.status=='success':
-  print user.id 
-  print user.full_name
+    print user.id 
+    print user.full_name
 
 ```
 
