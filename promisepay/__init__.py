@@ -10,7 +10,7 @@ import os
 def auth(username,secret,is_production=False):
 	os.environ['PROMISE_PAY_SECRET'] = secret
 	os.environ['PROMISE_PAY_KEY'] = username 
-	os.environ['is_production'] = is_production
+	os.environ['is_production'] = str(is_production)
 	
 
 
@@ -40,7 +40,7 @@ class PromisePay(object):
 
 			self.username = os.environ.get('PROMISE_PAY_KEY')  
 			self.password = os.environ.get('PROMISE_PAY_SECRET')  
-			self.is_production = os.environ.get('is_production')  
+			self.is_production = bool(os.environ.get('is_production'))
 
 			self.AUTH = 'Basic '+base64.b64encode(self.username+':'+self.password)
 			self.HEADERS = {'Authorization': self.AUTH,"Content-Type": "application/json"}
