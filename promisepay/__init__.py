@@ -20,21 +20,22 @@ try:
 	AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
 	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
 
-except ImproperlyConfigured:
+except:
 
-	password = 'YOUR PROMISEPAY SECRET'
-	username = 'YOUR PROMISEPAY KEY'
-
-
-	AUTH = 'Basic '+base64.b64encode(settings.PROMISE_PAY_KEY+':'+settings.PROMISE_PAY_SECRET)
-	HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
-
-
+	password = None
+	username = None
 
 
 class PromisePay(object):
 	
-	def __init__(self):
+	def __init__(self,secret=None,key=None):
+
+
+		if not password and not username:
+			AUTH = 'Basic '+base64.b64encode(key+':'+secret)
+			HEADERS = {'Authorization': AUTH,"Content-Type": "application/json"}
+
+
 		self.AUTH = AUTH
 		self.HEADERS = HEADERS
 		
