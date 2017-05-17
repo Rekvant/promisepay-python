@@ -22,14 +22,13 @@ try:
 
 except:
 
-	password = None
-	username = None
+	username = 'YOUR PROMISEPAY USERNAME'
+	password = 'YOUR PROMISEPAY SECRECT'
 
 
 class PromisePay(object):
 	
-	def __init__(self,secret=None,key=None):
-
+	def __init__(self):
 
 		if not password and not username:
 			AUTH = 'Basic '+base64.b64encode(key+':'+secret)
